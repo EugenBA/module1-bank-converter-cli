@@ -1,7 +1,19 @@
+//! Модуль представляет модель для формата документа MT940
+//!
+//! Предоставляет функциональность по описании структуры и трансформаци данных между форматами
+//!
+
 use regex::Regex;
 use crate::models::camt053::{BalanceAttribute, BkToCstmrStmt, DtAttribute, NtryAttribute,
                              NtryDtlsAttribute, TxDtlsAttribute};
 
+/// Структура для документа MT940
+/// Содержит методы для чтения, транофрмации и записи данных MT940
+/// ```no_run
+///
+/// pub fn from_read<R: Read>(r: &mut R) -> Result<Self, ParserError>
+/// pub fn write_to<W: Write>(&mut self, writer: &mut W) -> Result<(), ConvertError>
+///
 pub struct DocumentMt940 {
     pub(crate) document: Vec<BkToCstmrStmt>
 }
@@ -25,13 +37,13 @@ impl DocumentMt940 {
     }
 
     fn parse_field_one(header: &str) -> String{
-        let regex = Regex::new(r"F\d{2}([A-Z]*\d*[A-Z]*)\d").unwrap();
-        if let Some(capture) = regex.captures(header) {
-            capture[1].to_string()
+        let regex = Regex::new(r"F\d{2}([A-Z]*\d*[A-Z]*)\d");
+        if let Ok(regex) = regex {
+            if let Some(capture) = regex.captures(header) {
+             return capture[1].to_string();
+            }
         }
-        else {
-            "UNKNOW_BIC".to_string()
-        }
+        "UNKNOW_BIC".to_string()
     }
 
     fn parse_field_two(header: &str, document: &mut BkToCstmrStmt) {

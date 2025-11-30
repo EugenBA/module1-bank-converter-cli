@@ -1,57 +1,52 @@
+use crate::errors::ParserError;
 use crate::models::camt053::DocumentCamt053;
 use crate::models::csv::DocumentCsv;
 use crate::models::mt940::DocumentMt940;
 
-impl From<DocumentCamt053>  for DocumentMt940 {
-    fn from(camt053: DocumentCamt053) -> Self {
-        Self {
+
+impl TryFrom<DocumentCamt053> for DocumentMt940 {
+    type Error = ParserError;
+    fn try_from(camt053: DocumentCamt053) -> Result<Self, Self::Error> {
+        Ok(Self {
             document: camt053.bk_to_cstmr_stmt
-        }
+        })
     }
 }
 
-impl From<DocumentCsv> for DocumentMt940 {
-    fn from(csv: DocumentCsv) -> Self {
-        let camt = DocumentCsv::parse_to_camt(csv);
-        match camt {
-            Ok(camt053) => DocumentMt940::from(camt053),
-            Err(e) => panic!("Error convert csv to camt053: {}", e)
-        }
+impl TryFrom<DocumentCsv> for DocumentMt940 {
+    type Error = ParserError;
+    fn try_from(csv: DocumentCsv) -> Result<Self, Self::Error> {
+        let camt = DocumentCsv::parse_to_camt(csv)?;
+        Ok(DocumentMt940::try_from(camt)?)
     }
 }
-
-impl From<DocumentMt940> for DocumentCamt053 {
-    fn from(mt940: DocumentMt940) -> Self {
+impl TryFrom<DocumentMt940> for DocumentCamt053 {
+    type Error = ParserError;
+    fn try_from(mt940: DocumentMt940) -> Result<Self, Self::Error> {
         let mut camt = Self::default();
         camt.bk_to_cstmr_stmt = mt940.document;
-        camt
+        Ok(camt)
     }
 }
 
-impl From<DocumentCsv> for DocumentCamt053 {
-    fn from(csv: DocumentCsv) -> Self {
-        match DocumentCsv::parse_to_camt(csv) {
-            Ok(camt053) => camt053,
-            Err(e) => panic!("Error convert csv to camt053: {}", e)
-        }
+impl TryFrom<DocumentCsv> for DocumentCamt053 {
+    type Error = ParserError;
+    fn try_from(csv: DocumentCsv) -> Result<Self, Self::Error> {
+        Ok(DocumentCsv::parse_to_camt(csv)?)
     }
 }
 
-impl From<DocumentCamt053> for DocumentCsv {
-    fn from(camt053: DocumentCamt053) -> Self {
-        match DocumentCsv::parse_to_csv(&camt053) {
-            Ok(csv) => csv,
-            Err(e) => { panic!("Error convert camt053 to csv: {}", e);}
-        }
+impl TryFrom<DocumentCamt053> for DocumentCsv {
+    type Error = ParserError;
+    fn try_from(camt053: DocumentCamt053) -> Result<Self, Self::Error> {
+        Ok(DocumentCsv::parse_to_csv(&camt053)?)
     }
 }
 
-impl From<DocumentMt940> for DocumentCsv {
-    fn from(mt940: DocumentMt940) -> Self {
-        let camt = DocumentCamt053::from(mt940);
-        match DocumentCsv::parse_to_csv(&camt) {
-            Ok(csv) => csv,
-            Err(e) => { panic!("Error convert camt053 to csv: {}", e);}
-        }
+impl TryFrom<DocumentMt940> for DocumentCsv {
+    type Error = ParserError;
+    fn try_from(mt940: DocumentMt940) -> Result<Self, Self::Error> {
+        let camt = DocumentCamt053::try_from(mt940)?;
+        Ok(DocumentCsv::parse_to_csv(&camt)?)
     }
 }
