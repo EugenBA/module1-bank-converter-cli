@@ -1,3 +1,7 @@
+//! Модуль представляет модель для формата документа CSV
+//!
+//! Предоставляет функциональность по описании структуры и трансформаци данных между форматами
+//!
 use regex::Regex;
 use serde::Serialize;
 use serde::Deserialize;
@@ -7,6 +11,13 @@ use crate::models::camt053::{BalanceAttribute, BkToCstmrStmt, DocumentCamt053,
                              NtryAttribute, TxDtlsAttribute};
 use chrono::{Local};
 
+/// Структура для документа CSV
+/// Содержит методы для чтения, транофрмации и запис данных CSV
+/// ```no_run
+/// 
+/// pub fn from_read<R: Read>(r: &mut R) -> Result<Self, ParserError> 
+/// pub fn write_to<W: Write>(&mut self, writer: &mut W) -> Result<(), ConvertError> 
+/// 
 pub struct DocumentCsv {
     pub(crate) rows: Vec<RowCsv>
 }

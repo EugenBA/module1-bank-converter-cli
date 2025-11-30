@@ -1,24 +1,43 @@
+//! Модуль для реализации обработки ошибок 
+//!
+//! Предоставляет функциональность по обработке ошибок чтения, конвертации и записи.
+
 use std::fmt::{Display, Formatter};
 use std::io::Error;
 use serde::Deserialize;
 use thiserror::Error;
+/// Перчсисление для ошибок конвертации
+/// Ошибки входных аргументов парсера
+/// Ошибки конвертации
+/// Ошибки запис сконвертировнных данных
 
 #[derive(Error, Debug)]
 pub enum ConvertError
 {
+    /// Ошибки входных аргументов
     BadArgument(String),
+    /// Ошибки конвертации
     ParseError(String),
+    /// Ошибки записи сконвертировнных данных
     WriteError(String)
 }
 
-
+/// Перчисление ошибо чтеняи и парсинга входныхх данных
+/// Ошибки чтения файлов
+/// Ошибка формата входных файлов
+/// Ошибка xml десерилизации
+/// Ошибка CSV десерелизации
+///
 #[derive(Error, Debug, Deserialize)]
 pub enum ParserError
 {
+    /// Ошибки чтения файлов
     FileReadError(String),
+    /// Ошибка формата входных файлов
     BadInputFormatFile(String),
-    BadFormatType(String),
+    /// Ошибка xml десерилизации
     BadXmlDeserializeError(String),
+    /// Ошибка CSV десерелизации
     BadCsvDeserializeError(String),
 }
 
@@ -27,7 +46,6 @@ impl Display for ParserError {
         match self {
             ParserError::FileReadError(s) => write!(f, "File read error: {}", s),
             ParserError::BadInputFormatFile(s) => write!(f, "Bad input format file: {}", s),
-            ParserError::BadFormatType(s) => write!(f, "Bad format type: {}", s),
             ParserError::BadCsvDeserializeError(s) => write!(f, "Csv format deserialize error: {}", s),
             ParserError::BadXmlDeserializeError(s) => write!(f, "Xml format deserialize error: {}", s),
         }

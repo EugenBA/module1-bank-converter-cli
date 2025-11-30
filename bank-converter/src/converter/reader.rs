@@ -8,6 +8,14 @@ use regex::{Regex};
 
 
 impl DocumentCamt053 {
+    /// Создает новый экземпляр `DocumentCamt053` со значениями по умолчанию.
+    ///
+    /// # Примеры
+    ///
+    /// ```
+    /// use your_crate::DocumentCamt053;
+    ///
+    /// let doc = DocumentCamt053::new();
     pub fn new() -> Self {
         DocumentCamt053::default()
     }
@@ -29,6 +37,20 @@ impl DocumentCamt053 {
     /// * Неверный формат файла
     /// * Неверный входной тип
     /// * Ошибка десерелизации xml
+    /// # Примеры
+    ///
+    /// ## Чтение из файла
+    ///
+    /// ```no_run
+    /// use std::fs::File;
+    /// use your_crate::DocumentCamt053;
+    ///
+    /// let mut file = File::open("camt053.xml").unwrap();
+    /// match DocumentCamt053::from_read(&mut file) {
+    ///     Ok(document) => println!("Успешно загружено: {:?}", document),
+    ///     Err(e) => eprintln!("Ошибка загрузки: {}", e),
+    /// }
+    ///
     ///
     pub fn from_read<R: Read>(r: &mut R) -> Result<Self, ParserError> {
         let mut xml_str = String::new();

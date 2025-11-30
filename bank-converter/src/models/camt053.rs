@@ -1,5 +1,15 @@
+//! Модуль представляет модель для формата документа CAMT.053
+//!
+//! Предоставляет функциональность по описании структуры и трансформаци данных между форматами
+//! 
 use serde::{Deserialize, Serialize};
-
+/// Структура для документа CAMT.053
+/// Содержит методы для чтения, транофрмации и запис данных CAMT053
+/// ```no_run
+///
+/// pub fn from_read<R: Read>(r: &mut R) -> Result<Self, ParserError> 
+/// pub fn write_to<W: Write>(&mut self, writer: &mut W) -> Result<(), ConvertError> 
+/// 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(rename="Document", default)]
 pub struct DocumentCamt053 {

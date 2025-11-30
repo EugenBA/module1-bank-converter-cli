@@ -64,17 +64,17 @@ impl  PipelineConverter {
         let document = self.read_document(r)?;
         let mut camt = match document {
             Document::DocumentCamt053(doc) => doc,
-            Document::DocumentMt940(doc) => { DocumentCamt053::from(doc)},
-            Document::DocumentCsv(doc) => { DocumentCamt053::from(doc)},
+            Document::DocumentMt940(doc) => { DocumentCamt053::try_from(doc)?},
+            Document::DocumentCsv(doc) => { DocumentCamt053::try_from(doc)?},
         };
         match self.data_out {
             FormatType::None => { Err(ConvertError::WriteError("Bad output format".to_string())) }
             FormatType::Csv => {
-                let mut csv = DocumentCsv::from(camt);
+                let mut csv = DocumentCsv::try_from(camt)?;
                 return csv.write_to(w);
             }
             FormatType::Mt940 => {
-                let mut mt940 = DocumentMt940::from(camt);
+                let mut mt940 = DocumentMt940::try_from(camt)?;
                 return mt940.write_to(w);
             }
             FormatType::Camt053 | FormatType::Xml => {
